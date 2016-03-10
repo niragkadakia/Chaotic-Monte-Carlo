@@ -22,7 +22,7 @@ else:
 ### User-defined information about the annealing procedures
 
 L = 50
-ndims = 2
+ndims = 20
 num_steps = 100
 nbatch = 100
 sampler_list = ('CHMC','HMC')
@@ -32,11 +32,11 @@ display=1
 # Types: Quartic_Conditioned_Separable, Quartic_Conditioned
 CHMC_Type = 'Quartic_Conditioned_Separable' 
 # Types: Gaussian_Diag or Gaussian_Non_Diag
-Ex_Type = "Gaussian_Diag"  
+Ex_Type = "Gaussian_Non_Diag"  
 # Below is only relevant for "Gaussian_Non_Diag" Ex_Types. Types: Uniform, Toeplitz_Exponential, Toeplitz_Uniform
 Ex_Structure = "Uniform" 
 # Hard limits on values in uniform covariance matrices when searching for positive definite matrices
-cov_lims = [-0.85,0.85]
+cov_lims = [-0.13,0.13]
 # P is resampled either via rejection sampling or Monte Carlo + mix_up methods
 p_corrupt_type = 'Rejection_Sampling' #'Monte_Carlo'
 
@@ -51,6 +51,8 @@ for iE in epsilons:
 	print ("\n\n\n\n\n\########################\n\n     iE   =   %s         \
          \n\n#######################\n\n\n\n\n\n" % iE)
 	iN_counter = 0
+	errors = sp.zeros((num_steps,len(sampler_list), 2))
+
 	for iN in sp.arange(iter_min, iter_max):
 
 		print ("..........................................     iN   =   %s" % iN)
@@ -79,11 +81,7 @@ for iE in epsilons:
 
 		if plot_errors == True:
 	
-			errors_tmp, samp_names = calc_covariance_errors(history,dist_X)
-			if iN > iter_min:
-				errors = (errors*iN_counter + errors_tmp)/(iN_counter+1)
-			else:
-				errors = errors_tmp
+			errors, samp_names = calc_covariance_errors(history,dist_X)
 
 			sp.savetxt('Data/Errors/On_Diag,D=%s,E=%s,L=%s,Batch=%s,N=%s,beta=%s,iN=%s.dat' % (ndims,epsilons[iE_counter],L,nbatch,num_steps,beta,iN), errors[:,:,0],fmt  = '%.3e',delimiter='\t')
 			sp.savetxt('Data/Errors/Off_Diag,D=%s,E=%s,L=%s,Batch=%s,N=%s,beta=%s,iN=%s.dat' % (ndims,epsilons[iE_counter],L,nbatch,num_steps,beta,iN), errors[:,:,1],fmt  = '%.3e',delimiter='\t')

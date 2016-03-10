@@ -93,9 +93,12 @@ def calc_covariance_errors(history, dist_X):
               
               cov_matrix_calc[:,:,iN] = sp.cov(X[:,:,:iN].reshape(N,nbatch*iN),rowvar=1)
               corr_matrix_calc[:,:,iN] = sp.dot(sp.dot(sp.diag(inv_var_diags**.5),cov_matrix_calc[:,:,iN]),sp.diag(inv_var_diags**.5))
-              errors_tmp[iN,0] = sp.sum((sp.diag(sp.diag(corr_matrix_calc[:,:,iN]))-sp.diag(sp.diag(dist_X.corr_matrix)))**2.0)**.5/N
-              errors_tmp[iN,1] = sp.sum((corr_matrix_calc[:,:,iN] - sp.diag(sp.diag(corr_matrix_calc[:,:,iN]))-dist_X.corr_matrix +sp.diag(sp.diag(dist_X.corr_matrix)))**2.0)**.5/(N*(N-1))
-              
+              errors_tmp[iN,0] = sp.sum((sp.diag(sp.diag(corr_matrix_calc[:,:,iN]))-sp.diag(sp.diag(dist_X.corr_matrix)))**2.0)/N
+              errors_tmp[iN,1] = sp.sum((corr_matrix_calc[:,:,iN] - sp.diag(sp.diag(corr_matrix_calc[:,:,iN]))-dist_X.corr_matrix +sp.diag(sp.diag(dist_X.corr_matrix)))**2.0)/(N*(N-1))
+
+            print (corr_matrix_calc[:5,:5,-1])
+            print (dist_X.corr_matrix[:5,:5])
+               
             errors[:,counter,0] = errors_tmp[:,0]            
             errors[:,counter,1] = errors_tmp[:,1]            
 
