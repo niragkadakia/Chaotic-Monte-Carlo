@@ -2,7 +2,6 @@ import scipy as sp
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from itertools import accumulate
 
 colors = ['red','blue','green']
 

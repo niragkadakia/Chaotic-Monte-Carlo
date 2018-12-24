@@ -3,10 +3,10 @@ import scipy as sp
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from Includes.energy import Kinetic_Energy
-from Includes.energy import Potential_Energy
-from Includes.CHMC import counting_wrapper
-from Includes.CHMC import CHMC
+from energy import Kinetic_Energy
+from energy import Potential_Energy
+from CHMC import counting_wrapper
+from CHMC import CHMC
 from collections import OrderedDict
 import time
 
@@ -19,7 +19,6 @@ def load_results(filename):
 	data = sp.load(filename)
 	history = data['history'][()]
 	return history    
-
 
 def run_sampling(
 	base_filename = "Test", 
@@ -131,7 +130,7 @@ def run_sampling(
             for iN in range(num_steps):
 
                 if math.modf(iN/num_steps*10)[0] == 0:
-                    print ("%s%% ... " % int(iN/num_steps*100+10),flush=True,end= " ") 
+                    print "%s%% ... " % int(iN/num_steps*100+10), 
 
                 X,P,Ex,Ep = sampler.sample(1)
 

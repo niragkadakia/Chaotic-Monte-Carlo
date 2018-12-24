@@ -1,7 +1,7 @@
 import scipy as sp
 from collections import defaultdict
 from scipy.stats import multivariate_normal
-from Includes.utils import diag_normal_pdf
+from utils import diag_normal_pdf
 import time
 import sys
 sys.setrecursionlimit(5000)
@@ -44,6 +44,13 @@ class counting_wrapper(object):
 
 
 #### 		METHOD TO PERFORM HAMILTON AND P CORRUPTION STEPS
+
+class sampler_obj():
+	"""
+	"""
+	
+	def __init__(self):
+		self.dist_X 
 
 
 class CHMC(object):
@@ -298,9 +305,9 @@ class CHMC(object):
 		self.counter['F'] += len(active_idx)
 
 		if self.display > 1:
-			print("Transition counts ", end=' ')
+			print "Transition counts ",
 			for k in sorted(self.counter.keys()):
-				print("%s:%d"%(k, self.counter[k]), end=' ')
+				print "%s:%d"%(k, self.counter[k]),
 
 		# corrupt the momentum
 		#TODO This formulation is invalid for CHMC 
@@ -318,7 +325,7 @@ class CHMC(object):
 		"""
 		for iN in range(num_steps):
 			if self.display > 1:
-				print("sampling step %d / %d,"%(iN+1, num_steps), end=' ')
+				print "sampling step %d / %d,"%(iN+1, num_steps),
 			self.sampling_iteration()
 			self.counter_steps += 1
 
@@ -326,9 +333,9 @@ class CHMC(object):
 			tot = 0
 			for k in sorted(self.counter.keys()):
 				tot += self.counter[k]
-			print("Step %d, Transition fractions "%(self.counter_steps), end=' ')
+			print "Step %d, Transition fractions "%(self.counter_steps),
 			for k in sorted(self.counter.keys()):
-				print("%s:%g"%(k, self.counter[k]/float(tot)), end=' ')
+				print "%s:%g"%(k, self.counter[k]/float(tot)), 
 			print()
 
 		return (self.state.X.copy(), 

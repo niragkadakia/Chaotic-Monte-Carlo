@@ -1,10 +1,23 @@
-from Includes.sampler import run_sampling
-from Includes.sampler import load_results
-from Includes.plot import plot_covariance
-from Includes.plot import calc_covariance_errors
-from Includes.plot import plot_correlation
+"""
+Run batch job CHMC run.
+
+Created by Nirag Kadakia at 22:50 04-17-2018
+This work is licensed under the 
+Creative Commons Attribution-NonCommercial-ShareAlike 4.0 
+International License. 
+To view a copy of this license,
+visit http://creativecommons.org/licenses/by-nc-sa/4.0/.
+"""
+
 import scipy as sp
 import sys
+sys.path.append('../src/')
+from sampler import run_sampling
+from sampler import load_results
+from plot import plot_covariance
+from plot import calc_covariance_errors
+from plot import plot_correlation
+
 
 if len(sys.argv) != 1:
 	iter_min = int(sys.argv[1])-1
