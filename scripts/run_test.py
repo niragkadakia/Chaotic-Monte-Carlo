@@ -16,7 +16,7 @@ import scipy as sp
 import scipy.linalg as LA
 import os
 from local_vars import data_dir
-import cPickle as pickle
+import pickle
 
 DATA_DIR = data_dir()
 

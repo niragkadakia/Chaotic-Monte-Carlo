@@ -112,7 +112,7 @@ class CHMC(object):
 		H_prop = self.H(x_prop, p_prop)
 		dH = self.H_vec[-1] - H_prop
 		if sp.prod(sp.isfinite(dH)) == 0:
-			print "Trajectory divergence...reduce epsilon" 
+			print ("Trajectory divergence...reduce epsilon")
 			quit()
 		acc_probs = sp.ones(self.nWalkers)
 		acc_probs[dH < 0] = sp.exp(dH[dH < 0])
@@ -151,7 +151,7 @@ class CHMC(object):
 		x_prop[:, rej_idxs] = self.x_vec[-1][:, rej_idxs]
 		p_prop[:, rej_idxs] = self.p_vec[-1][:, rej_idxs]
 		
-		print len(rej_idxs[0])
+		print (len(rej_idxs[0]))
 		
 		# Randomize momentum
 		p_prop = self.sample_p()
