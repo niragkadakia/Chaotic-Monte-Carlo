@@ -75,7 +75,7 @@ class CHMC(object):
 		else:
 			std = 1./sp.sqrt(self.log_pX.diag)
 			self.x_init = sp.random.normal(0, std, (self.nWalkers, self.nD)).T
-	 	self.p_init = self.sample_p()
+		self.p_init = self.sample_p()
 			
 	def Ex(self, x):
 		return self.log_pX.f(x)
