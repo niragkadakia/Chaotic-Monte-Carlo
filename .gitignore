@@ -1,5 +1,5 @@
 *.sh
 *.pyc
-src/local_defs.py
 *.txt
 data/
+src/local_vars.py

@@ -1,5 +1,5 @@
 """
-CHMC class and sampler class
+Chaotic Monte Carlo class and associated methods
 
 
 Created by Nirag Kadakia at 12:00 06-09-2018
@@ -18,6 +18,7 @@ import energy
 		
 class CHMC(object):
 	"""
+	TODO
 	"""
 	
 	def __init__(self, nD=2, nWalkers=100, epsilon=0.25,
@@ -159,62 +160,3 @@ class CHMC(object):
 		self.p_vec.append(p_prop)
 		self.H_vec.append(self.H(x_prop, p_prop))
 		
-		
-		
-		
-		
-def integrator():
-	errs = []
-	for iR in range(1):
-		nD = 50
-		a = CHMC(nWalkers=1000, nD=nD, epsilon=0.15, nSteps_per_samp=50)
-		a.set_pX_dist(pX_type='gaussian_toeplitz_power')
-		a.set_pP_dist(pP_type='gaussian_diag', diag=a.log_pX.diag**-1.0)
-		#a.set_pP_dist(pP_type='quartic_separable', diag=a.log_pX.diag**-1.0)
-		sp.random.seed()
-		a.set_init_state()
-		a.p_init *= 2 ### NEED TO GET INITIAL sampled outside region
-		
-		"""
-		from scipy.optimize import check_grad
-		for val in range(10):
-			i = sp.random.normal(0, 20, 4)
-			suc = check_grad(a.log_pP.f, a.log_pP.df, i)
-			print (suc)
-		quit()
-		"""
-		
-		steps = 2000
-		burnin = 1000
-		
-		for iD in range(steps):
-			print (iD)
-			a.sample()
-		a.x_vec = sp.asarray(a.x_vec)
-		a.p_vec = sp.asarray(a.p_vec)
-		
-		vals = sp.reshape(sp.rollaxis(a.x_vec[burnin:], -1), ((-1, a.nD))).T
-		cov = sp.cov(vals)
-		
-		#import matplotlib.pyplot as plt
-		#from mpl_toolkits.mplot3d import Axes3D
-		import scipy.linalg as LA
-		#plt.subplot(121)
-		#plt.imshow(LA.inv(cov))
-		#plt.subplot(122)
-		#plt.imshow(a.log_pX.inv_cov)
-		#plt.show()
-		err = (a.log_pX.inv_cov - LA.inv(cov))**2.0
-		for iN in range(nD):
-			err[iN, iN] = 0
-		print (sp.sum(err**2.0)**0.5)
-		errs.append(sp.sum(err**2.0)**0.5)
-		#plt.imshow(err)
-		#plt.show()
-		#fig = plt.figure()
-		#ax = fig.add_subplot(111, projection='3d')
-		#plt.plot(a.x_vec[:, 0, 0], a.x_vec[:, -1, 0])
-		#plt.show()
-		
-	print (errs)
-	print (sp.mean(errs))
