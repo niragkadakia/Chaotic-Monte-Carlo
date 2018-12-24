@@ -19,7 +19,7 @@ def data_dir():
 	
 	"""
 	
-	data_dir = 'path_to_dir'
+	data_dir = 'C:\Users\Nirag\Documents\code\Chaotic-Monte-Carlo\data'
 	
 	return data_dir
 	
