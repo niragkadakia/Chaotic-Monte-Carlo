@@ -9,7 +9,7 @@ To view a copy of this license, visit
 http://creativecommons.org/licenses/by-nc-sa/4.0/.
 """
 
-import scipy as sp
+import numpy as np
 import scipy.linalg as LA
 from utils import diag_normal_pdf
 
@@ -24,7 +24,7 @@ class energy_func(object):
 	def __init__(self, nD=2):
 		self._dist_type = 'gaussian_std_diag'
 		self._nD = nD
-		self._diag = sp.ones(self.nD)
+		self._diag = np.ones(self.nD)
 		
 	@property
 	def nD(self):
@@ -37,7 +37,7 @@ class energy_func(object):
 		return self._diag
 	
 	def f(self, x):
-		return 0.5*sp.sum((x.T**2.0*self.diag).T, axis=0)
+		return 0.5*np.sum((x.T**2.0*self.diag).T, axis=0)
 		
 	def df(self, x):
 		return (x.T*self.diag).T
@@ -69,16 +69,16 @@ class gaussian_diag(energy_func):
 				% (self.nD, len(diag))
 			self._diag = diag
 		else:
-			self._diag = 10.**sp.linspace(-conditioning, 0, self.nD)
-		self.inv_cov = sp.diag(self._diag)
+			self._diag = 10.**np.linspace(-conditioning, 0, self.nD)
+		self.inv_cov = np.diag(self._diag)
 	
 	def sample(self, num_samples):
 		"""
 		Sample from the distribution.
 		"""
 		
-		std = 1./sp.sqrt(self.diag)
-		return sp.random.normal(0, std, (num_samples, self.nD)).T
+		std = 1./np.sqrt(self.diag)
+		return np.random.normal(0, std, (num_samples, self.nD)).T
 	
 	
 class gaussian_const_corr(energy_func):
@@ -141,25 +141,25 @@ class gaussian_const_corr(energy_func):
 		the diag.
 		"""
 		
-		self.cov = sp.ones((self.nD, self.nD))*self.rho
-		sp.fill_diagonal(self.cov, 1)
+		self.cov = np.ones((self.nD, self.nD))*self.rho
+		np.fill_diagonal(self.cov, 1)
 		
-		sp.random.seed(self.seed)
-		u_vecs = sp.random.uniform(-1, 1, size=(self.nD, self.noiseD))
-		u_norms = sp.sqrt(sp.sum(u_vecs**2.0, axis=1))
+		np.random.seed(self.seed)
+		u_vecs = np.random.uniform(-1, 1, size=(self.nD, self.noiseD))
+		u_norms = np.sqrt(np.sum(u_vecs**2.0, axis=1))
 		u_vecs = (u_vecs.T/u_norms).T
-		noise_matrix = sp.dot(u_vecs, u_vecs.T)*self.epsilon
-		sp.fill_diagonal(noise_matrix, 0)
+		noise_matrix = np.dot(u_vecs, u_vecs.T)*self.epsilon
+		np.fill_diagonal(noise_matrix, 0)
 		
 		self.cov += noise_matrix
 		self.inv_cov = LA.inv(self.cov)
-		self._diag = sp.diag(self.inv_cov)
+		self._diag = np.diag(self.inv_cov)
 		
 	def f(self, x):
-		return 0.5*sp.sum(sp.dot(x.T, sp.dot(self.inv_cov, x)), axis=0)
+		return 0.5*np.sum(np.dot(x.T, np.dot(self.inv_cov, x)), axis=0)
 	
 	def df(self, x):
-		return (sp.dot(x.T, self.inv_cov)).T
+		return (np.dot(x.T, self.inv_cov)).T
 		
 		
 class gaussian_toeplitz_power(energy_func):
@@ -221,24 +221,24 @@ class gaussian_toeplitz_power(energy_func):
 		the diag.
 		"""
 		
-		cov_row = self.rho**sp.arange(self.nD)
+		cov_row = self.rho**np.arange(self.nD)
 		self.cov = LA.toeplitz(cov_row)
-		sp.random.seed(self.seed)
-		u_vecs = sp.random.uniform(-1, 1, size=(self.nD, self.noiseD))
-		u_norms = sp.sqrt(sp.sum(u_vecs**2.0, axis=1))
+		np.random.seed(self.seed)
+		u_vecs = np.random.uniform(-1, 1, size=(self.nD, self.noiseD))
+		u_norms = np.sqrt(np.sum(u_vecs**2.0, axis=1))
 		u_vecs = (u_vecs.T/u_norms).T
-		noise_matrix = sp.dot(u_vecs, u_vecs.T)*self.epsilon
-		sp.fill_diagonal(noise_matrix, 0)
+		noise_matrix = np.dot(u_vecs, u_vecs.T)*self.epsilon
+		np.fill_diagonal(noise_matrix, 0)
 		
 		self.cov += noise_matrix
 		self.inv_cov = LA.inv(self.cov)
-		self._diag = sp.diag(self.inv_cov)
+		self._diag = np.diag(self.inv_cov)
 		
 	def f(self, x):
-		return 0.5*sp.sum(sp.dot(x.T, sp.dot(self.inv_cov, x)), axis=0)
+		return 0.5*np.sum(np.dot(x.T, np.dot(self.inv_cov, x)), axis=0)
 	
 	def df(self, x):
-		return (sp.dot(x.T, self.inv_cov)).T
+		return (np.dot(x.T, self.inv_cov)).T
 
 	
 class quartic_separable(energy_func):
@@ -254,7 +254,7 @@ class quartic_separable(energy_func):
 		self.num_rej_sample_attempts = 2
 		
 		if diag is None:
-			self._diag = sp.ones(self.nD)
+			self._diag = np.ones(self.nD)
 		else:
 			assert len(diag) == self.nD, \
 				"length of diag passed to quartic_separable() "\
@@ -264,14 +264,14 @@ class quartic_separable(energy_func):
 	def f(self, x):
 		# TODO
 	
-		val = sp.sum((x.T**2.0*self.diag).T, axis=0)
+		val = np.sum((x.T**2.0*self.diag).T, axis=0)
 		
 		# Quartic coupling terms, same scaling
 		x1 = x
-		x2 = sp.roll(x, -1, axis=0)
+		x2 = np.roll(x, -1, axis=0)
 		diag1 = self.diag
-		diag2 = sp.roll(self.diag, -1)
-		val += sp.sum((x1.T**2*x2.T**2*diag1*diag2).T[:-1:2], axis=0)
+		diag2 = np.roll(self.diag, -1)
+		val += np.sum((x1.T**2*x2.T**2*diag1*diag2).T[:-1:2], axis=0)
 		
 		return val/2.0
 		
@@ -280,9 +280,9 @@ class quartic_separable(energy_func):
 		
 		grad = (x.T*self.diag).T
 		x1 = x
-		x2 = sp.roll(x, -1, axis=0)
+		x2 = np.roll(x, -1, axis=0)
 		diag1 = self.diag
-		diag2 = sp.roll(self.diag, -1)
+		diag2 = np.roll(self.diag, -1)
 		
 		grad[::2] += (x1.T*x2.T**2*diag1*diag2).T[::2]
 		grad[1::2] += (x1.T**2*x2.T*diag1*diag2).T[::2]
@@ -295,12 +295,12 @@ class quartic_separable(energy_func):
 		
 		# Number of candidates = #attempts per sample/walker for each var pair
 		num_cands = num_samples*self.num_rej_sample_attempts*half_nD
-		samples = sp.random.normal(size=(2, num_cands))
+		samples = np.random.normal(size=(2, num_cands))
 		
 		# For each sample, proposal distriboution is 2D normal
-		prop_maxs = (2*sp.pi)*diag_normal_pdf(samples, sp.ones(2), num_cands)
-		prop_vals = sp.random.uniform(0, 1, num_cands)*prop_maxs
-		test_vals = sp.exp(-(samples[0, :]**2.0 + samples[1, :]**2.0 + 
+		prop_maxs = (2*np.pi)*diag_normal_pdf(samples, np.ones(2), num_cands)
+		prop_vals = np.random.uniform(0, 1, num_cands)*prop_maxs
+		test_vals = np.exp(-(samples[0, :]**2.0 + samples[1, :]**2.0 + 
 					samples[0, :]**2.0*samples[1, :]**2.0)/2.0)
 		
 		# Compare test against proposal values
@@ -319,9 +319,9 @@ class quartic_separable(energy_func):
 		
 		# Last element is from a normal distribution, scaled by covariance
 		if self.nD % 2 == 1:
-			final_p = sp.random.normal(0, self.diag[-1]**-0.5,
+			final_p = np.random.normal(0, self.diag[-1]**-0.5,
 						size=num_samples)
-			scaled_acc_samples = sp.vstack((scaled_acc_samples, final_p))
+			scaled_acc_samples = np.vstack((scaled_acc_samples, final_p))
 		
 		##TODO: ensure enough walkers, or repeat.
 		
