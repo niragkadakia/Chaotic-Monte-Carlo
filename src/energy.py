@@ -264,35 +264,28 @@ class quartic_separable(energy_func):
 	def f(self, x):
 		# TODO
 	
-		val = 0
-		
-		# diag quadratic elements
-		val += sp.sum((x.T**2.0*self.diag).T, axis=0)
+		val = sp.sum((x.T**2.0*self.diag).T, axis=0)
 		
 		# Quartic coupling terms, same scaling
-		for iD in sp.arange(0, self.nD - 1, 2):
-			val += x[iD]**2*x[iD + 1]**2*self.diag[iD]*self.diag[iD + 1]
-			
+		x1 = x
+		x2 = sp.roll(x, -1, axis=0)
+		diag1 = self.diag
+		diag2 = sp.roll(self.diag, -1)
+		val += sp.sum((x1.T**2*x2.T**2*diag1*diag2).T[:-1:2], axis=0)
+		
 		return val/2.0
 		
 	def df(self, x):
 		# TODO
 		
-		grad = sp.zeros(x.shape)
+		grad = (x.T*self.diag).T
+		x1 = x
+		x2 = sp.roll(x, -1, axis=0)
+		diag1 = self.diag
+		diag2 = sp.roll(self.diag, -1)
 		
-		for iD in sp.arange(self.nD):
-		
-			# diag quadratic elements --> linear
-			grad[iD] += x[iD]*self.diag[iD]
-			
-			# Quartic coupling terms --> linear*quadratic
-			if iD % 2 == 0:
-				if iD < self.nD - 1:
-					grad[iD] += x[iD]*x[iD + 1]**2*self.diag[iD]*\
-							self.diag[iD + 1]
-			elif iD % 2 == 1:
-				grad[iD] += x[iD - 1]**2*x[iD]*self.diag[iD - 1]*\
-							self.diag[iD]
+		grad[::2] += (x1.T*x2.T**2*diag1*diag2).T[::2]
+		grad[1::2] += (x1.T**2*x2.T*diag1*diag2).T[::2]
 			
 		return grad
 		
@@ -330,7 +323,7 @@ class quartic_separable(energy_func):
 						size=num_samples)
 			scaled_acc_samples = sp.vstack((scaled_acc_samples, final_p))
 		
-		#TODO: ensure enough walkers, or repeat.
+		##TODO: ensure enough walkers, or repeat.
 		
 		return scaled_acc_samples
 		
